@@ -10,7 +10,7 @@ groupByFriendRelations = GROUP friends BY (personID, myFriend);
 -- groups together all of the page access by person, and page
 groupByPageAccesses = GROUP accessLog BY (byWho, whatPage);
 
--- finds all of the people who has an access time further than 14 days from their first access
+-- finds all of the people who have added a friend, but never accessed their page
 findBadFriends = FILTER groupByPageAccesses BY (byWho, whatPage) NOT groupByFriendRelations;
 
 
