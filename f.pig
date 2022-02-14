@@ -14,7 +14,7 @@ groupByPageAccesses = GROUP accessLog BY (byWho, whatPage);
 findBadFriends = FILTER groupByPageAccesses BY (byWho, whatPage) NOT groupByFriendRelations;
 
 
--- finds the name of people who are innactive
+-- finds the names of bad friends
 joinWithPages = JOIN findBadFriends BY byWho, myPage BY id;
 
 displayName = FOREACH joinWithPages GENERATE name;
