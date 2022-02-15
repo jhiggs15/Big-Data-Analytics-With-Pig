@@ -5,19 +5,24 @@ friends = LOAD 'input/friends-test.csv' USING PigStorage (',') AS (friendRel:int
 
 
 -- groups together access log by the page, so that each row is a page and all its accesses
-groupByFriends = GROUP friends BY personID;
+--friendsGrouped = FOREACH friends GENERATE friendRel;
+--sumOfPeople = FOREACH friendsGrouped GENERATE COUNT(friends) AS count;
 
--- counts the number of friends each person has
-sumOfFriends = FOREACH groupByFriends GENERATE group AS personID, COUNT(friends) as numberOfFriends;
+friendsGroup = GROUP friends ALL;
+friendCount = FOREACH friendsGroup GENERATE COUNT(friends) AS hello;
+-- the number of users / number of friends
 
--- finds the average amount of friends across the friends file
-averageOfFriends = FOREACH numberOfFriends Gernerate (friends.personID), AVG(numberOfFriends);
+---- counts the number of friends each person has
+--sumOfFriends = FOREACH groupByFriends GENERATE group AS personID, COUNT(friends) as numberOfFriends;
+--
+---- finds the average amount of friends across the friends file
+--averageOfFriends = FOREACH numberOfFriends GENERATE (friends.personID), AVG(numberOfFriends);
+--
+---- filters out the people with a higher frined count than the average
+--findFamousPeople = FILTER sumOfFriends BY (numberOfFriends > averageOfFriends);
+--
+---- finds the name of people who are famous
+--joinWithPages = JOIN findFamousPeople BY personID, myPage BY id;
 
--- filters out the people with a higher frined count than the average
-findFamousPeople = FILTER sumOfFriends BY (numberOfFriends > averageOfFriends);
 
--- finds the name of people who are famous
-joinWithPages = JOIN findFamousPeople BY personID, myPage BY id;
-
-
-DUMP joinWithPages;
+DUMP friendCount.$0;

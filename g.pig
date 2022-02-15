@@ -8,14 +8,9 @@ myPage = LOAD 'input/myPage-test.csv' USING PigStorage (',') AS (id:int, name:ch
 groupByAccesses = GROUP accessLog BY byWho;
 
 -- finds the minimum access time (first access) of each person
-firstAccessTime = FOREACH groupByAccesses generate (accessLog.byWho), MIN(accessLog.accessTime);
+firstAccessTime = FOREACH groupByAccesses GENERATE group AS byWho, MAX(accessLog.accessTime) AS maxAccessTime;
 
--- finds all of the people who has an access time further than 14 days from their first access
-findLostInterest = FILTER groupByAccesses BY (accessLog.accessTime > (firstAccessTime)+ 1400));
+-- finds all of the people who has an access time further than 5 days from their first access
+findLostInterest = FILTER firstAccessTime BY ((1000000 - maxAccessTime) >= 432000);
 
-
--- finds the name of people who are innactive
-joinWithPages = JOIN findLostInterest BY byWho, myPage BY id;
-
-
-DUMP joinWithPages;
+DUMP findLostInterest;
